@@ -4,45 +4,49 @@ import wx
 
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, title=title, size=(500,500))
-        self.control = wx.TextCtrl(self, style=wx.TE_MULTILINE)
-        self.CreateStatusBar() # A StatusBar in the bottom of the window
+        wx.Frame.__init__(self, parent, title="Medidor", size=(700,500))
+        self.initUI()
 
-        # Setting up the menu.
-        filemenu= wx.Menu()
 
-        # wx.ID_ABOUT and wx.ID_EXIT are standard ids provided by wxWidgets.
-        menuAbout = filemenu.Append(wx.ID_ABOUT, "&About"," Sobre o programa")
-        menuExit = filemenu.Append(wx.ID_EXIT,"E&xit"," Termina o programa")
-        menuMedicao = filemenu.Append(wx.ID_ANY,"M&edir", "Regista nova medicao")
+    def initUI(self):
+        menubar = wx.Menu()
 
-        # Creating the menubar.
-        menuBar = wx.MenuBar()
-        menuBar.Append(filemenu,"&File") # Adding the "filemenu" to the MenuBar
-        menuBar.Append(filemenu,"&Medicao")
-        self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
+        fileMenu = wx.Menu()
+        fileMenu.Append(wx.ID_ANY, "&Ficheiro")
+        fileMenu.AppendSeparator()
+        aboutOnClick = fileMenu.Append((wx.ID_ANY, "&Sobre"))
+        exitOnClick = fileMenu.Append(wx.ID_EXIT, "&Sair")
 
-        # Set events.
-        self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
-        self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
-        self.Bind(wx.EVT_MENU, self.onMedir, menuMedicao)
+        #sub-menu opcoes de recolha de dados
+        novoRegisto = wx.Menu()
+        novoRegisto.Append(wx.ID_ANY, "&Novo Registo")
+        novoRegisto.Append(wx.ID_ANY, "&Guardar Registo")
 
-        self.Show(True)
+        #adidionar o sub-menu ao menu
+        fileMenu.Append(wx.ID_ANY, '&Novos Registos', novoRegisto)
 
-    def OnAbout(self,e):
-        # A message dialog box with an OK button. wx.OK is a standard ID in wxWidgets.
-        dlg = wx.MessageDialog( self, "MEDIDOR DENSIDADE LIQUIDA\nEscola Superior Tecnologia e Gestao - Instituto Politecnico Beja\nAutor: Miguel Rosa\nNovembro 2015", "Medidor Densidade", wx.OK)
-        dlg.ShowModal() # Show it
-        dlg.Destroy() # finally destroy it when finished.
+        #adicionar funcoes aos 'botoes' dos menus
+        self.Bind(wx.EVT_MENU, self.onClickAbout, aboutOnClick)
+        self.Bind(wx.EVT_MENU, self.onClickExit, exitOnClick)
 
-    def OnExit(self,e):
-        self.Close(True)  # Close the frame.
+        #adicionar o menu a frame
+        menubar.Append(fileMenu, "&Ficheiro")
+        self.SetMenuBar(menubar)
+        self.Show()
 
-    def onMedir(self,e):
-        dlg = wx.MessageDialog( self, "Nova Medicao by MENU");
-        dlg.ShowModal() # Show it
-        dlg.Destroy() # finally destroy it when finished.
 
-app = wx.App(False)
-frame = MainWindow(None, "Sample editor")
-app.MainLoop()
+        def onClickAbout(self, e):
+            dlg = wx.MessageDialog( self, "Medidor de Densidade Liquida\nAutor: Miguel Rosa\nESTiG - IPB\nNovembro/Dezembro 2015");
+            dlg.ShowModal() #mostra a caixa dialogo
+            dlg.Destroy() #apos terminar, destroi
+
+        def onClickExit(self,e):
+            self.Close(True)  # Close the frame
+
+
+
+
+def main():
+    app = wx.App(False)
+    frame = MainWindow(None, "Medidor de densidade")
+    app.MainLoop()
